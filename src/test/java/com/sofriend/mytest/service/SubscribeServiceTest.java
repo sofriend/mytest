@@ -47,7 +47,7 @@ public class SubscribeServiceTest {
     public void setup() {
         // person add
         for (int base=10; base<20; base++) {
-            for (int i=0; i<20; i++) {
+            for (int i=0; i<10; i++) {
                 personService.save(Person.builder().account(String.valueOf((base*1000)+i)).build());
             }
         }
@@ -57,7 +57,7 @@ public class SubscribeServiceTest {
                             .lecturer("임꺽정")
                             .title("옛이야기")
                             .description("강연 설명 자세히")
-                            .limit(1000)
+                            .limit(500)
                             .startat(Instant.now().plus(3,ChronoUnit.DAYS))
                             .endat(Instant.now().plus(2, ChronoUnit.HOURS))
                             .build();
@@ -75,7 +75,7 @@ public class SubscribeServiceTest {
                             .endat(Instant.now().plus(3, ChronoUnit.HOURS))
                             .build();
         Lecture lecture2 = Lecture.builder().hall("hall2").lecturer("강사").title("title2")
-                            .description("강연 설명 자세히").limit(20)
+                            .description("강연 설명 자세히").limit(400)
                             .startat(Instant.now().plus(4,ChronoUnit.DAYS))
                             .endat(Instant.now().plus(2, ChronoUnit.HOURS))
                             .build();
@@ -94,11 +94,10 @@ public class SubscribeServiceTest {
         subscribeService.save(lecture1.getId(), "10001");
         subscribeService.save(lecture1.getId(), "10002");
 
-        subscribeService.save(lecture2.getId(), "10003");
-        subscribeService.save(lecture2.getId(), "10004");
-        subscribeService.save(lecture2.getId(), "10005");
-        subscribeService.save(lecture2.getId(), "10006");
-
+        for(int i=0;i<300;i++) {
+            personService.save(String.valueOf(60000+i));
+            subscribeService.save(lecture2.getId(), String.valueOf(60000+i));
+        }
         subscribeService.save(lecture3.getId(), "10007");
     
         List<Lecture> list = subscribeService.findFavoriteLecture();
@@ -243,7 +242,7 @@ class TestRunnable implements Runnable {
 
     @Override
     public void run() {
-        for (int i=0; i<20; i++) {
+        for (int i=0; i<10; i++) {
             log.info("idx: {}, inidx: {}", index, i);
             subscribeService.save(lectureId, String.valueOf((index*1000)+i));
         }
