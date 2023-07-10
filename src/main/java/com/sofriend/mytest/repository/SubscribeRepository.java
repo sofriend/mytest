@@ -14,6 +14,7 @@ import com.sofriend.mytest.vo.Subscribe;
 
 public interface SubscribeRepository extends JpaRepository<Subscribe, Long> {
     public Optional<Subscribe> findByLectureIdAndPersonAccount(Long lectureId, String account);
+    public void deleteByLectureId(Long lectureId);
     
     @Query(value="SELECT s.lecture FROM Subscribe s WHERE s.person.account = :account")
     public List<Lecture> findLectureByAccount(@Param("account") String account);
@@ -23,5 +24,8 @@ public interface SubscribeRepository extends JpaRepository<Subscribe, Long> {
 
     @Query(value="SELECT s.lecture FROM Subscribe s WHERE s.subscribeAt > :time GROUP BY s.lecture.id ORDER BY count(s.person) DESC")
     public List<Lecture> findFavoriteLecture(@Param("time") Instant time);
+
+    @Query(value="SELECT count(1) FROM Subscribe s WHERE s.lecture.id = :id")
+    public int countLecturePerson(@Param("id") Long id);
 
 }

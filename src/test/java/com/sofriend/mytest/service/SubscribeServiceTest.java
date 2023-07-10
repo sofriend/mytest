@@ -18,15 +18,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.Rollback;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import com.sofriend.mytest.repository.PersonRepository;
-import com.sofriend.mytest.repository.SubscribeRepository;
 import com.sofriend.mytest.util.JsonUtil;
 import com.sofriend.mytest.vo.Lecture;
 import com.sofriend.mytest.vo.Person;
-import com.sofriend.mytest.vo.Subscribe;
 
 @SpringBootTest
 @Rollback(true)
@@ -45,9 +39,6 @@ public class SubscribeServiceTest {
     @Autowired
     private LectureService lectureService;
 
-    @Autowired
-    private SubscribeRepository repository;
-
     @BeforeAll
     public void setup() {
         // person add
@@ -62,7 +53,7 @@ public class SubscribeServiceTest {
                             .lecturer("임꺽정")
                             .title("옛이야기")
                             .description("강연 설명 자세히")
-                            .limit(10)
+                            .limit(1000)
                             .startat(Instant.now().plus(3,ChronoUnit.DAYS))
                             .endat(Instant.now().plus(2, ChronoUnit.HOURS))
                             .build();
@@ -143,6 +134,32 @@ public class SubscribeServiceTest {
         subscribeService.delete(lectureId, account);
         // 내 계정으로 신청한 강연이 없는 것을 확인
         assertEquals(0, subscribeService.findLectureByAccount(account).size());
+    }
+
+    @Test
+    @DisplayName("강연인원초과 테스트")
+    public void testLimit() {
+        Lecture lecture = Lecture.builder()
+                            .hall("대강연장9")
+                            .lecturer("임꺽정9")
+                            .title("옛이야기9")
+                            .description("강연 설명 자세히9")
+                            .limit(2)
+                            .startat(Instant.now().plus(3,ChronoUnit.DAYS))
+                            .endat(Instant.now().plus(2, ChronoUnit.HOURS))
+                            .build();
+        lectureService.save(lecture);
+        Long id = lecture.getId();
+        personService.save(Person.builder().account("87000").build());
+        personService.save(Person.builder().account("87001").build());
+        personService.save(Person.builder().account("87002").build());
+        subscribeService.save(id, "87000");
+        subscribeService.save(id, "87001");
+        Throwable t = assertThrowsExactly(RuntimeException.class, () -> {
+            subscribeService.save(id, "87002");
+        });
+        assertEquals(t.getMessage(), "강연인원초과로 신청불가");
+
     }
 
     @Test

@@ -3,12 +3,16 @@ package com.sofriend.mytest.service;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
+import java.util.Optional;
+
+import javax.transaction.Transactional;
 
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import com.sofriend.mytest.repository.LectureRepository;
 import com.sofriend.mytest.repository.LectureSpecification;
+import com.sofriend.mytest.repository.SubscribeRepository;
 import com.sofriend.mytest.vo.Lecture;
 
 import lombok.RequiredArgsConstructor;
@@ -17,6 +21,7 @@ import lombok.RequiredArgsConstructor;
 @Service
 public class LectureService {
     private final LectureRepository lectureRepository;
+    private final SubscribeRepository subscribeRepository;
 
     /**
      * 새 강연 생성
@@ -28,10 +33,13 @@ public class LectureService {
     }
 
     public Lecture findById(Long id) {
-        return lectureRepository.findById(id).get();
+        Optional<Lecture> l = lectureRepository.findById(id);
+        return l.isEmpty() ? null : l.get();
     }
 
+    @Transactional
     public void delete(Long id) {
+        subscribeRepository.deleteByLectureId(id);
         lectureRepository.deleteById(id);
     }
 

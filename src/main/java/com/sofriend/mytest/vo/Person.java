@@ -17,14 +17,15 @@ import lombok.experimental.SuperBuilder;
 @Setter
 @Getter
 @Entity
-@Table(name = "person")
+@Table(name="person")
 public class Person {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "person_id")
+    @GeneratedValue(strategy=GenerationType.IDENTITY)
+    @Column(name="person_id")
     private Long id;
 
     /** 사번 */
-    @Column(name = "account", unique = true)
+    @Column(name="account", unique=true)
     private String account;
+
 }

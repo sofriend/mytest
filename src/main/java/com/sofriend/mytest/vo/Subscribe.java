@@ -20,7 +20,7 @@ import lombok.experimental.SuperBuilder;
 /**
  * 강의를 수강한 수강자 정보 관계 테이블
  */
-@Table(name = "subscribe", uniqueConstraints = @UniqueConstraint(columnNames = { "lecture_id", "person_id"}))
+@Table(name="subscribe", uniqueConstraints=@UniqueConstraint(columnNames={"lecture_id", "person_id"}))
 @Entity
 @NoArgsConstructor
 @Setter
@@ -28,18 +28,18 @@ import lombok.experimental.SuperBuilder;
 @SuperBuilder
 public class Subscribe {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "subscribe_id")
+    @GeneratedValue(strategy=GenerationType.IDENTITY)
+    @Column(name="subscribe_id")
     private Long id;
     
     @ManyToOne
-    @JoinColumn(name = "lecture_id")
+    @JoinColumn(name="lecture_id")
     private Lecture lecture;
 
     @ManyToOne
-    @JoinColumn(name = "person_id")
+    @JoinColumn(name="person_id")
     private Person person;
     
-    @Column(name = "subscribeat")
+    @Column(name="subscribeat")
     private Instant subscribeAt;
 }
