@@ -10,8 +10,11 @@ import java.util.List;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.api.TestMethodOrder;
+import org.junit.jupiter.api.MethodOrderer.OrderAnnotation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +28,7 @@ import com.sofriend.mytest.vo.Person;
 @SpringBootTest
 @Rollback(true)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
+@TestMethodOrder(OrderAnnotation.class)
 public class SubscribeServiceTest {
     Logger log = LoggerFactory.getLogger(getClass());
 
@@ -61,6 +65,7 @@ public class SubscribeServiceTest {
         lectureId = lecture.getId();
     }
 
+    @Order(1)
     @Test
     @DisplayName("최근3일간 인기강연")
     public void test1FavoriteLecture() {
@@ -100,6 +105,7 @@ public class SubscribeServiceTest {
         assertEquals(lecture2.getId(), list.get(0).getId());
     }
 
+    @Order(2)
     @Test
     @DisplayName("강연신청")
     public void testOne() {
@@ -107,6 +113,7 @@ public class SubscribeServiceTest {
         subscribeService.save(lectureId, "93000");
     }
 
+    @Order(3)
     @Test
     @DisplayName("동시강연신청")
     public void testSave() throws Exception {
