@@ -62,10 +62,49 @@ public class SubscribeServiceTest {
     }
 
     @Test
+    @DisplayName("최근3일간 인기강연")
+    public void test1FavoriteLecture() {
+        Lecture lecture1 = Lecture.builder().hall("hall1").lecturer("강사").title("title1")
+                            .description("강연 설명 자세히").limit(20)
+                            .startat(Instant.now().plus(5,ChronoUnit.DAYS))
+                            .endat(Instant.now().plus(3, ChronoUnit.HOURS))
+                            .build();
+        Lecture lecture2 = Lecture.builder().hall("hall2").lecturer("강사").title("title2")
+                            .description("강연 설명 자세히").limit(20)
+                            .startat(Instant.now().plus(4,ChronoUnit.DAYS))
+                            .endat(Instant.now().plus(2, ChronoUnit.HOURS))
+                            .build();
+
+        Lecture lecture3 = Lecture.builder().hall("hall3").lecturer("강사").title("title3")
+                            .description("강연 설명 자세히").limit(20)
+                            .startat(Instant.now().plus(6,ChronoUnit.DAYS))
+                            .endat(Instant.now().plus(2, ChronoUnit.HOURS))
+                            .build();
+                            
+        lectureService.save(lecture1);
+        lectureService.save(lecture2);
+        lectureService.save(lecture3);
+        // 순위 title2 > title1 > title 3
+        subscribeService.save(lecture1.getId(), "10000");
+        subscribeService.save(lecture1.getId(), "10001");
+        subscribeService.save(lecture1.getId(), "10002");
+
+        subscribeService.save(lecture2.getId(), "10003");
+        subscribeService.save(lecture2.getId(), "10004");
+        subscribeService.save(lecture2.getId(), "10005");
+        subscribeService.save(lecture2.getId(), "10006");
+
+        subscribeService.save(lecture3.getId(), "10007");
+    
+        List<Lecture> list = subscribeService.findFavoriteLecture();
+        assertEquals(lecture2.getId(), list.get(0).getId());
+    }
+
+    @Test
     @DisplayName("강연신청")
     public void testOne() {
-        personService.save(Person.builder().account("90000").build());
-        subscribeService.save(lectureId, "90000");
+        personService.save(Person.builder().account("93000").build());
+        subscribeService.save(lectureId, "93000");
     }
 
     @Test
@@ -182,44 +221,6 @@ public class SubscribeServiceTest {
         }
     }
 
-    @Test
-    @DisplayName("최근3일간 인기강연")
-    public void testFavoriteLecture() {
-        Lecture lecture1 = Lecture.builder().hall("hall1").lecturer("강사").title("title1")
-                            .description("강연 설명 자세히").limit(20)
-                            .startat(Instant.now().plus(5,ChronoUnit.DAYS))
-                            .endat(Instant.now().plus(3, ChronoUnit.HOURS))
-                            .build();
-        Lecture lecture2 = Lecture.builder().hall("hall2").lecturer("강사").title("title2")
-                            .description("강연 설명 자세히").limit(20)
-                            .startat(Instant.now().plus(4,ChronoUnit.DAYS))
-                            .endat(Instant.now().plus(2, ChronoUnit.HOURS))
-                            .build();
-
-        Lecture lecture3 = Lecture.builder().hall("hall3").lecturer("강사").title("title3")
-                            .description("강연 설명 자세히").limit(20)
-                            .startat(Instant.now().plus(6,ChronoUnit.DAYS))
-                            .endat(Instant.now().plus(2, ChronoUnit.HOURS))
-                            .build();
-                            
-        lectureService.save(lecture1);
-        lectureService.save(lecture2);
-        lectureService.save(lecture3);
-        // 순위 title2 > title1 > title 3
-        subscribeService.save(lecture1.getId(), "10000");
-        subscribeService.save(lecture1.getId(), "10001");
-        subscribeService.save(lecture1.getId(), "10002");
-
-        subscribeService.save(lecture2.getId(), "10003");
-        subscribeService.save(lecture2.getId(), "10004");
-        subscribeService.save(lecture2.getId(), "10005");
-        subscribeService.save(lecture2.getId(), "10006");
-
-        subscribeService.save(lecture3.getId(), "10007");
-    
-        List<Lecture> list = subscribeService.findFavoriteLecture();
-        assertEquals(lecture2.getId(), list.get(0).getId());
-    }
 }
 
 class TestRunnable implements Runnable {

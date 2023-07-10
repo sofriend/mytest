@@ -56,8 +56,8 @@ public class LectureServiceTest {
                             .build();
         lectureService.save(lecture);
 
-        personService.save("91001");
-        subscribeService.save(lecture.getId(), "91001");
+        personService.save("92001");
+        subscribeService.save(lecture.getId(), "92001");
         assertTrue(lectureService.findById(lecture.getId()) != null);
 
         lectureService.delete(lecture.getId());
